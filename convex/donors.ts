@@ -49,8 +49,8 @@ export const searchDonors = query({
 export const updateDonor = mutation({
   args: {
     donorId: v.id("donors"),
-    name: v.string(),
-    imageUrl: v.string(),
+    name: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
     phone: v.optional(v.string()),
   },
 
