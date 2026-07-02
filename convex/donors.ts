@@ -65,6 +65,16 @@ export const deleteDonor = mutation({
   },
 
   handler: async (ctx, { donorId }) => {
+    // 1. Fetch all donations associated with this donor
+    const donations = await ctx.db
+      .query("donations")
+      .withIndex("by_donor", (q) => q.eq("donorId", donorId))
+      .collect();
+
+    // 2. Delete all the mapped donations concurrently
+    await Promise.all(donations.map((donation) => ctx.db.delete(donation._id)));
+
+    // 3. Finally, delete the donor
     await ctx.db.delete(donorId);
   },
 });
