@@ -1,5 +1,5 @@
 import { mutation, query } from "./_generated/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 
 export const createDonation = mutation({
   args: {
@@ -9,6 +9,9 @@ export const createDonation = mutation({
   },
 
   handler: async (ctx, args) => {
+    if (args.amount <= 0 || !Number.isFinite(args.amount)) {
+      throw new ConvexError("Donation amount must be a positive number.");
+    }
     return await ctx.db.insert("donations", {
       ...args,
       createdAt: Date.now(),
@@ -73,6 +76,10 @@ export const updateDonation = mutation({
   },
 
   handler: async (ctx, { donationId, ...rest }) => {
+    // Validate that the number is positive and not NaN/Infinity
+    if (rest.amount <= 0 || !Number.isFinite(rest.amount)) {
+      throw new ConvexError("Donation amount must be a positive number.");
+    }
     await ctx.db.patch(donationId, rest);
   },
 });
