@@ -8,13 +8,19 @@
  * @module
  */
 
+import type * as donations from "../donations.js";
+import type * as donors from "../donors.js";
+
 import type {
   ApiFromModules,
   FilterApi,
   FunctionReference,
 } from "convex/server";
 
-declare const fullApi: ApiFromModules<{}>;
+declare const fullApi: ApiFromModules<{
+  donations: typeof donations;
+  donors: typeof donors;
+}>;
 
 /**
  * A utility for referencing Convex functions in your app's public API.
