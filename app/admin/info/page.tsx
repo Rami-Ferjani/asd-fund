@@ -1,17 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import type { Doc } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
-import {
-  LayoutDashboard,
-  Users,
-  HandCoins,
-} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -73,48 +65,6 @@ function formatDate(ms: number) {
 // ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
-
-function Sidebar() {
-  const pathname = usePathname();
-
-  const links = [
-    { label: "Dashboard", href: "/admin/info", icon: LayoutDashboard },
-    { label: "Donor Management", href: "/admin/donors", icon: Users },
-    { label: "Add Donations", href: "/admin/donations", icon: HandCoins },
-  ];
-
-  return (
-    <aside className="hidden md:flex w-64 flex-col h-screen sticky top-0 bg-white border-r-2 border-[#008751]">
-      <div className="p-8 border-b-2 border-[#e5e2e1]">
-        <h1 className="font-[family-name:var(--font-anton)] text-[32px] leading-[40px] text-[#006b3f] uppercase tracking-tighter">
-          ASD ADMIN
-        </h1>
-      </div>
-      <nav className="flex-1 py-6 flex flex-col gap-2 px-4">
-        {links.map((link) => {
-          const active = pathname === link.href;
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={
-                active
-                  ? "flex items-center gap-3 px-4 py-3 bg-[#008751] text-[#fdfff9] text-sm font-bold uppercase tracking-[0.05em] rounded"
-                  : "flex items-center gap-3 px-4 py-3 text-[#3e4a41] hover:text-[#006b3f] transition-colors text-sm font-bold uppercase tracking-[0.05em] rounded"
-              }
-            >
-              <link.icon
-                className="size-5"
-                fill={active ? "currentColor" : "none"}
-              />
-              {link.label}
-            </Link>
-          );
-        })}
-      </nav>
-    </aside>
-  );
-}
 
 function StatCard({
   label,
@@ -291,10 +241,7 @@ export default function AdminInfoPage() {
   const donorsCount = donors?.length ?? 0;
 
   return (
-    <div className="flex w-full">
-      <Sidebar />
-
-      <main className="flex-1 max-w-7xl mx-auto px-8 py-20 w-full">
+    <main className="flex-1 max-w-7xl mx-auto px-8 py-20 w-full">
         {/* Header */}
         <header className="mb-20 flex justify-between items-end">
           <div>
@@ -414,6 +361,5 @@ export default function AdminInfoPage() {
 
         <Toaster />
       </main>
-    </div>
   );
 }
