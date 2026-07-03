@@ -1,0 +1,210 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Admin Dashboard - ASD Bus Fund</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Be+Vietnam+Pro:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#fbfff9",
+                        "surface-container-low": "#f6f3f2",
+                        "surface-bright": "#fcf9f8",
+                        "error": "#ba1a1a",
+                        "surface-tint": "#006d40",
+                        "primary-fixed-dim": "#70db9d",
+                        "on-tertiary": "#ffffff",
+                        "primary": "#006b3f",
+                        "on-surface-variant": "#3e4a41",
+                        "background": "#fcf9f8",
+                        "on-error": "#ffffff",
+                        "secondary": "#7a590c",
+                        "inverse-primary": "#70db9d",
+                        "surface-container-highest": "#e5e2e1",
+                        "secondary-fixed-dim": "#ecc06c",
+                        "tertiary-fixed": "#a5f3c3",
+                        "inverse-surface": "#313030",
+                        "on-tertiary-fixed-variant": "#005231",
+                        "on-surface": "#1c1b1b",
+                        "surface-dim": "#dcd9d9",
+                        "primary-fixed": "#8df8b7",
+                        "on-tertiary-fixed": "#002111",
+                        "on-secondary-container": "#78580b",
+                        "surface-container": "#f0eded",
+                        "secondary-container": "#fed17b",
+                        "on-secondary-fixed-variant": "#5d4200",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#8ad7a9",
+                        "on-primary-fixed": "#002110",
+                        "on-secondary-fixed": "#271900",
+                        "tertiary": "#196a44",
+                        "on-primary-fixed-variant": "#00522f",
+                        "surface-variant": "#e5e2e1",
+                        "outline-variant": "#bdcabe",
+                        "on-primary": "#ffffff",
+                        "tertiary-container": "#37835b",
+                        "secondary-fixed": "#ffdea5",
+                        "outline": "#6e7a70",
+                        "on-primary-container": "#fdfff9",
+                        "inverse-on-surface": "#f3f0ef",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#008751",
+                        "surface-container-lowest": "#ffffff",
+                        "on-background": "#1c1b1b",
+                        "surface-container-high": "#eae7e7",
+                        "on-secondary": "#ffffff",
+                        "surface": "#fcf9f8"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "grid-margin": "32px",
+                        "base": "8px",
+                        "section-gap": "80px",
+                        "grid-gutter": "24px",
+                        "stack-md": "24px",
+                        "stack-sm": "12px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Anton"],
+                        "label-bold": ["Be Vietnam Pro"],
+                        "headline-lg": ["Anton"],
+                        "display-lg": ["Anton"],
+                        "headline-xl": ["Anton"],
+                        "title-md": ["Be Vietnam Pro"],
+                        "body-md": ["Be Vietnam Pro"],
+                        "body-lg": ["Be Vietnam Pro"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "400" }],
+                        "label-bold": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "400" }],
+                        "display-lg": ["72px", { "lineHeight": "80px", "fontWeight": "400" }],
+                        "headline-xl": ["48px", { "lineHeight": "56px", "fontWeight": "400" }],
+                        "title-md": ["20px", { "lineHeight": "28px", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .brutalist-border { border: 2px solid #008751; }
+        .brutalist-card:hover { border: 3px solid #008751; transition: border-width 0.1s; }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex font-body-md text-body-md">
+<!-- Sidebar -->
+<aside class="w-64 bg-surface-container-lowest border-r-2 border-primary hidden md:flex flex-col h-screen sticky top-0">
+<div class="p-grid-margin border-b-2 border-surface-variant">
+<h1 class="font-headline-lg text-headline-lg text-primary uppercase tracking-tighter">ASD ADMIN</h1>
+</div>
+<nav class="flex-1 py-stack-md flex flex-col gap-2 px-4">
+<a class="flex items-center gap-3 px-4 py-3 bg-primary-container text-on-primary-container font-label-bold text-label-bold rounded" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors font-label-bold text-label-bold rounded" href="#">
+<span class="material-symbols-outlined">group</span>
+                Donor Management
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-primary transition-colors font-label-bold text-label-bold rounded" href="#">
+<span class="material-symbols-outlined">grid_view</span>Add Donations</a>
+
+</nav>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 max-w-7xl mx-auto px-grid-margin py-section-gap">
+<header class="mb-section-gap flex justify-between items-end">
+<div>
+<h2 class="font-headline-xl text-headline-xl text-primary uppercase">Fund Overview</h2>
+<p class="text-on-surface-variant font-body-lg text-body-lg mt-2">Manage donations for the new club bus.</p>
+</div>
+</header>
+<!-- Stats Overview -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-grid-gutter mb-section-gap">
+<div class="bg-surface-container-lowest p-grid-margin brutalist-border brutalist-card">
+<div class="text-on-surface-variant font-label-bold text-label-bold uppercase mb-2">Total Donations</div>
+<div class="font-display-lg text-display-lg text-primary">€12,500</div>
+</div>
+<div class="bg-surface-container-lowest p-grid-margin brutalist-border brutalist-card">
+<div class="text-on-surface-variant font-label-bold text-label-bold uppercase mb-2">Remaining Goal</div>
+<div class="font-display-lg text-display-lg text-secondary-container">€8,500</div>
+</div>
+<div class="bg-surface-container-lowest p-grid-margin brutalist-border brutalist-card">
+<div class="text-on-surface-variant font-label-bold text-label-bold uppercase mb-2">Total Donors</div>
+<div class="font-display-lg text-display-lg text-on-surface">125</div>
+</div>
+</section>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-grid-gutter">
+<!-- Add New Donation Form -->
+
+<!-- Recent Donations Table -->
+<section class="lg:col-span-3">
+<h3 class="font-headline-lg text-headline-lg text-on-surface mb-stack-md uppercase">Recent Activity</h3>
+<div class="bg-surface-container-lowest brutalist-border overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b-2 border-primary">
+<th class="p-4 font-label-bold text-label-bold uppercase text-on-surface">Donor Name</th>
+<th class="p-4 font-label-bold text-label-bold uppercase text-on-surface">Amount</th>
+<th class="p-4 font-label-bold text-label-bold uppercase text-on-surface">Date</th>
+<th class="p-4 font-label-bold text-label-bold uppercase text-on-surface text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md divide-y divide-surface-variant">
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="p-4 font-bold">Marco Rossi</td>
+<td class="p-4 text-primary font-bold">€500</td>
+<td class="p-4 text-on-surface-variant">Oct 24, 2024</td>
+<td class="p-4 text-right">
+<button class="text-primary hover:text-primary-container font-label-bold text-label-bold uppercase text-sm border border-primary px-3 py-1 hover:bg-primary hover:text-on-primary transition-all">Manage</button>
+</td>
+</tr>
+<tr class="bg-surface-container-low hover:bg-surface-container transition-colors group">
+<td class="p-4 font-bold">Local Bakery Co.</td>
+<td class="p-4 text-primary font-bold">€1,200</td>
+<td class="p-4 text-on-surface-variant">Oct 23, 2024</td>
+<td class="p-4 text-right">
+<button class="text-primary hover:text-primary-container font-label-bold text-label-bold uppercase text-sm border border-primary px-3 py-1 hover:bg-primary hover:text-on-primary transition-all">Manage</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="p-4 font-bold">Elena Bianchi</td>
+<td class="p-4 text-primary font-bold">€50</td>
+<td class="p-4 text-on-surface-variant">Oct 22, 2024</td>
+<td class="p-4 text-right">
+<button class="text-primary hover:text-primary-container font-label-bold text-label-bold uppercase text-sm border border-primary px-3 py-1 hover:bg-primary hover:text-on-primary transition-all">Manage</button>
+</td>
+</tr>
+<tr class="bg-surface-container-low hover:bg-surface-container transition-colors group">
+<td class="p-4 font-bold">Giuseppe Verdi</td>
+<td class="p-4 text-primary font-bold">€250</td>
+<td class="p-4 text-on-surface-variant">Oct 20, 2024</td>
+<td class="p-4 text-right">
+<button class="text-primary hover:text-primary-container font-label-bold text-label-bold uppercase text-sm border border-primary px-3 py-1 hover:bg-primary hover:text-on-primary transition-all">Manage</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+
+
+
+
+</body></html>
