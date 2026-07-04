@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
@@ -81,23 +81,24 @@ function AddDonorDialog() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const createDonor = useMutation(api.donors.createDonor);
 
-  // Reset form whenever dialog opens
-  useEffect(() => {
-    if (open) {
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (nextOpen) {
       setName("");
       setPhone("");
       setImageUrl("");
     }
-  }, [open]);
+  }
 
   async function handleSubmit() {
     if (!name.trim() || !imageUrl.trim()) {
       toast.error("Name and image URL are required.");
       return;
     }
+    setIsSubmitting(true);
     try {
       await createDonor({
         name: name.trim(),
@@ -108,11 +109,13 @@ function AddDonorDialog() {
       setOpen(false);
     } catch {
       toast.error("Failed to add donor");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button className="bg-[#7a590c] text-[#fdfff9] hover:bg-[#78580b] border-2 border-transparent shadow-[4px_4px_0px_#006b3f] flex items-center gap-2 uppercase font-bold tracking-[0.05em] text-sm px-6 py-2 rounded-none w-full sm:w-auto justify-center">
           <UserPlus className="size-4" />
@@ -184,23 +187,25 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
   const [name, setName] = useState(donor.name);
   const [phone, setPhone] = useState(donor.phone ?? "");
   const [imageUrl, setImageUrl] = useState(donor.imageUrl);
+  const [isSaving, setIsSaving] = useState(false);
 
   const updateDonor = useMutation(api.donors.updateDonor);
 
-  // Reset form whenever dialog opens
-  useEffect(() => {
-    if (open) {
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (nextOpen) {
       setName(donor.name);
       setPhone(donor.phone ?? "");
       setImageUrl(donor.imageUrl);
     }
-  }, [open, donor.name, donor.phone, donor.imageUrl]);
+  }
 
   async function handleSave() {
     if (!name.trim() || !imageUrl.trim()) {
       toast.error("Name and image URL are required.");
       return;
     }
+    setIsSaving(true);
     try {
       await updateDonor({
         donorId: donor._id,
@@ -212,11 +217,13 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
       setOpen(false);
     } catch {
       toast.error("Failed to update donor");
+    } finally {
+      setIsSaving(false);
     }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           size="icon"
@@ -229,9 +236,7 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Edit Donor</DialogTitle>
-          <DialogDescription>
-            Update the donor details.
-          </DialogDescription>
+          <DialogDescription>Update the donor details.</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4">
@@ -273,7 +278,7 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
               Cancel
             </Button>
           </DialogClose>
-          <Button size="sm" onClick={handleSave}>
+          <Button size="sm" onClick={handleSave} disabled={isSaving}>
             Save
           </Button>
         </DialogFooter>
@@ -284,13 +289,16 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
 
 function DeleteDonorDialog({ donor }: { donor: DonorWithTotal }) {
   const deleteDonor = useMutation(api.donors.deleteDonor);
-
+  const [isDeleting, setIsDeleting] = useState(false);
   async function handleDelete() {
+    setIsDeleting(true);
     try {
       await deleteDonor({ donorId: donor._id });
       toast.success("Donor deleted");
     } catch {
       toast.error("Failed to delete donor");
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -317,6 +325,7 @@ function DeleteDonorDialog({ donor }: { donor: DonorWithTotal }) {
           <AlertDialogAction
             onClick={handleDelete}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            disabled={isDeleting}
           >
             Delete
           </AlertDialogAction>
@@ -329,9 +338,7 @@ function DeleteDonorDialog({ donor }: { donor: DonorWithTotal }) {
 function DonorRow({ donor, index }: { donor: DonorWithTotal; index: number }) {
   return (
     <TableRow
-      className={`hover:bg-[#f0eded] ${
-        index % 2 === 1 ? "bg-[#f6f3f2]" : ""
-      }`}
+      className={`hover:bg-[#f0eded] ${index % 2 === 1 ? "bg-[#f6f3f2]" : ""}`}
     >
       <TableCell className="p-4">
         <div className="flex items-center gap-3">
@@ -344,9 +351,7 @@ function DonorRow({ donor, index }: { donor: DonorWithTotal; index: number }) {
           <span className="font-bold text-[#1c1b1b]">{donor.name}</span>
         </div>
       </TableCell>
-      <TableCell className="p-4 text-[#3e4a41]">
-        {donor.phone ?? "—"}
-      </TableCell>
+      <TableCell className="p-4 text-[#3e4a41]">{donor.phone ?? "—"}</TableCell>
       <TableCell className="p-4 font-[family-name:var(--font-anton)] text-[#006b3f] text-[20px]">
         {formatEur(donor.totalDonated)}
       </TableCell>
@@ -464,7 +469,9 @@ export default function DonorsPage() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col min-w-0">
-                  <span className="font-bold text-[#1c1b1b] truncate">{donor.name}</span>
+                  <span className="font-bold text-[#1c1b1b] truncate">
+                    {donor.name}
+                  </span>
                   <span className="text-sm text-[#3e4a41] truncate">
                     {donor.phone ?? "—"}
                   </span>

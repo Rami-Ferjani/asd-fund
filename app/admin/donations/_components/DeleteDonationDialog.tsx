@@ -7,21 +7,35 @@ import { Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
-  AlertDialog, AlertDialogTrigger, AlertDialogContent,
-  AlertDialogHeader, AlertDialogTitle, AlertDialogDescription,
-  AlertDialogFooter, AlertDialogAction, AlertDialogCancel,
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogAction,
+  AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
 import type { DonationWithDonor } from "./DonationRow";
+import { useState } from "react";
 
-export function DeleteDonationDialog({ donation }: { donation: DonationWithDonor }) {
+export function DeleteDonationDialog({
+  donation,
+}: {
+  donation: DonationWithDonor;
+}) {
   const deleteDonation = useMutation(api.donations.deleteDonation);
-
+  const [isDeleting, setIsDeleting] = useState(false);
   async function handleDelete() {
+    setIsDeleting(true);
     try {
       await deleteDonation({ donationId: donation._id });
       toast.success("Donation deleted");
     } catch {
       toast.error("Failed to delete donation");
+    } finally {
+      setIsDeleting(true);
     }
   }
 
@@ -40,7 +54,9 @@ export function DeleteDonationDialog({ donation }: { donation: DonationWithDonor
         <AlertDialogHeader>
           <AlertDialogTitle>Delete this donation?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete the donation of {donation.donor?.name ?? "this donor"}. This action cannot be undone.
+            This will permanently delete the donation of{" "}
+            {donation.donor?.name ?? "this donor"}. This action cannot be
+            undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -48,6 +64,7 @@ export function DeleteDonationDialog({ donation }: { donation: DonationWithDonor
           <AlertDialogAction
             onClick={handleDelete}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            disabled={isDeleting}
           >
             Delete
           </AlertDialogAction>

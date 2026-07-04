@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
@@ -103,17 +103,19 @@ function ManageDonationDialog({ donation }: { donation: LatestDonation }) {
   const [open, setOpen] = useState(false);
   const [amount, setAmount] = useState(String(donation.amount));
   const [note, setNote] = useState(donation.note ?? "");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const updateDonation = useMutation(api.donations.updateDonation);
   const deleteDonation = useMutation(api.donations.deleteDonation);
 
-  // Reset form whenever dialog opens
-  useEffect(() => {
-    if (open) {
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (nextOpen) {
       setAmount(String(donation.amount));
       setNote(donation.note ?? "");
     }
-  }, [open, donation.amount, donation.note]);
+  }
 
   async function handleSave() {
     const parsed = parseFloat(amount);
@@ -121,6 +123,7 @@ function ManageDonationDialog({ donation }: { donation: LatestDonation }) {
       toast.error("Amount must be a positive number.");
       return;
     }
+    setIsSubmitting(true);
     try {
       await updateDonation({
         donationId: donation._id,
@@ -131,10 +134,13 @@ function ManageDonationDialog({ donation }: { donation: LatestDonation }) {
       setOpen(false);
     } catch {
       toast.error("Failed to update donation");
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
   async function handleDelete() {
+    setIsDeleting(true);
     try {
       await deleteDonation({ donationId: donation._id });
       toast.success("Donation deleted");
@@ -142,10 +148,11 @@ function ManageDonationDialog({ donation }: { donation: LatestDonation }) {
     } catch {
       toast.error("Failed to delete donation");
     }
+    setIsDeleting(false);
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
@@ -190,7 +197,7 @@ function ManageDonationDialog({ donation }: { donation: LatestDonation }) {
         <DialogFooter>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" size="sm">
+              <Button variant="destructive" size="sm" disabled={isDeleting}>
                 Delete
               </Button>
             </AlertDialogTrigger>
@@ -219,7 +226,7 @@ function ManageDonationDialog({ donation }: { donation: LatestDonation }) {
             </Button>
           </DialogClose>
 
-          <Button size="sm" onClick={handleSave}>
+          <Button size="sm" onClick={handleSave} disabled={isSubmitting}>
             Save
           </Button>
         </DialogFooter>
@@ -242,165 +249,167 @@ export default function AdminInfoPage() {
 
   return (
     <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-20">
-        {/* Header */}
-        <header className="mb-10 sm:mb-16 md:mb-20 flex flex-col gap-2">
-          <div>
-            <h2 className="font-[family-name:var(--font-anton)] text-[28px] leading-[34px] sm:text-[36px] sm:leading-[40px] md:text-[48px] md:leading-[56px] text-[#006b3f] uppercase">
-              Fund Overview
-            </h2>
-            <p className="text-[16px] leading-[24px] sm:text-[18px] sm:leading-[28px] text-[#3e4a41] mt-2 font-[family-name:var(--font-be-vietnam)]">
-              Manage donations for the new club bus.
-            </p>
-          </div>
-        </header>
+      {/* Header */}
+      <header className="mb-10 sm:mb-16 md:mb-20 flex flex-col gap-2">
+        <div>
+          <h2 className="font-[family-name:var(--font-anton)] text-[28px] leading-[34px] sm:text-[36px] sm:leading-[40px] md:text-[48px] md:leading-[56px] text-[#006b3f] uppercase">
+            Fund Overview
+          </h2>
+          <p className="text-[16px] leading-[24px] sm:text-[18px] sm:leading-[28px] text-[#3e4a41] mt-2 font-[family-name:var(--font-be-vietnam)]">
+            Manage donations for the new club bus.
+          </p>
+        </div>
+      </header>
 
-        {/* Stats */}
-        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16 md:mb-20">
-          <StatCard
-            label="Total Donations"
-            value={formatEur(total ?? 0)}
-            valueClass="text-[#006b3f]"
-            loading={total === undefined}
-          />
-          <StatCard
-            label="Remaining Goal"
-            value={formatEur(remaining)}
-            valueClass="text-[#fed17b]"
-            loading={total === undefined}
-          />
-          <StatCard
-            label="Total Donors"
-            value={String(donorsCount)}
-            valueClass="text-[#1c1b1b]"
-            loading={donors === undefined}
-          />
-        </section>
+      {/* Stats */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16 md:mb-20">
+        <StatCard
+          label="Total Donations"
+          value={formatEur(total ?? 0)}
+          valueClass="text-[#006b3f]"
+          loading={total === undefined}
+        />
+        <StatCard
+          label="Remaining Goal"
+          value={formatEur(remaining)}
+          valueClass="text-[#fed17b]"
+          loading={total === undefined}
+        />
+        <StatCard
+          label="Total Donors"
+          value={String(donorsCount)}
+          valueClass="text-[#1c1b1b]"
+          loading={donors === undefined}
+        />
+      </section>
 
-        {/* Recent Activity */}
-        <section>
-          <h3 className="font-[family-name:var(--font-anton)] text-[24px] leading-[32px] sm:text-[28px] sm:leading-[34px] md:text-[32px] md:leading-[40px] text-[#1c1b1b] mb-4 sm:mb-6 uppercase">
-            Recent Activity
-          </h3>
+      {/* Recent Activity */}
+      <section>
+        <h3 className="font-[family-name:var(--font-anton)] text-[24px] leading-[32px] sm:text-[28px] sm:leading-[34px] md:text-[32px] md:leading-[40px] text-[#1c1b1b] mb-4 sm:mb-6 uppercase">
+          Recent Activity
+        </h3>
 
-          {/* Mobile card list */}
-          <div className="md:hidden flex flex-col gap-3">
-            {/* Loading */}
-            {latest === undefined &&
-              Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="bg-white border-2 border-[#008751] p-4">
-                  <Skeleton className="h-5 w-32 mb-3" />
-                  <Skeleton className="h-4 w-24" />
-                </div>
-              ))}
-
-            {/* Empty */}
-            {latest !== undefined && latest.length === 0 && (
-              <div className="bg-white border-2 border-[#008751] p-6 text-center text-[#3e4a41]">
-                No donations yet.
-              </div>
-            )}
-
-            {/* Cards */}
-            {latest?.map((d) => (
-              <div
-                key={d._id}
-                className="bg-white border-2 border-[#008751] p-4 flex flex-col gap-3"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <span className="font-bold text-[#1c1b1b] text-base">
-                    {d.donor?.name ?? "Unknown"}
-                  </span>
-                  <span className="font-[family-name:var(--font-anton)] text-[#006b3f] text-[20px] leading-[24px]">
-                    {formatEur(d.amount)}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-sm text-[#3e4a41]">{formatDate(d.createdAt)}</span>
-                  <ManageDonationDialog donation={d} />
-                </div>
+        {/* Mobile card list */}
+        <div className="md:hidden flex flex-col gap-3">
+          {/* Loading */}
+          {latest === undefined &&
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white border-2 border-[#008751] p-4">
+                <Skeleton className="h-5 w-32 mb-3" />
+                <Skeleton className="h-4 w-24" />
               </div>
             ))}
-          </div>
 
-          {/* Desktop table */}
-          <div className="hidden md:block bg-white border-2 border-[#008751] overflow-x-auto">
-            <Table className="w-full text-left border-collapse">
-              <TableHeader>
-                <TableRow className="bg-[#eae7e7] border-b-2 border-[#008751] hover:bg-[#eae7e7]">
-                  <TableHead className="p-4 text-sm font-bold uppercase tracking-[0.05em] text-[#1c1b1b]">
-                    Donor Name
-                  </TableHead>
-                  <TableHead className="p-4 text-sm font-bold uppercase tracking-[0.05em] text-[#1c1b1b]">
-                    Amount
-                  </TableHead>
-                  <TableHead className="p-4 text-sm font-bold uppercase tracking-[0.05em] text-[#1c1b1b]">
-                    Date
-                  </TableHead>
-                  <TableHead className="p-4 text-sm font-bold uppercase tracking-[0.05em] text-[#1c1b1b] text-right">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="text-base divide-y divide-[#e5e2e1]">
-                {/* Loading */}
-                {latest === undefined &&
-                  Array.from({ length: 4 }).map((_, i) => (
-                    <TableRow key={i}>
-                      <TableCell className="p-4">
-                        <Skeleton className="h-5 w-32" />
-                      </TableCell>
-                      <TableCell className="p-4">
-                        <Skeleton className="h-5 w-16" />
-                      </TableCell>
-                      <TableCell className="p-4">
-                        <Skeleton className="h-5 w-24" />
-                      </TableCell>
-                      <TableCell className="p-4 text-right">
-                        <Skeleton className="h-8 w-20 ml-auto" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
+          {/* Empty */}
+          {latest !== undefined && latest.length === 0 && (
+            <div className="bg-white border-2 border-[#008751] p-6 text-center text-[#3e4a41]">
+              No donations yet.
+            </div>
+          )}
 
-                {/* Empty */}
-                {latest !== undefined && latest.length === 0 && (
-                  <TableRow>
-                    <TableCell
-                      colSpan={4}
-                      className="p-8 text-center text-[#3e4a41]"
-                    >
-                      No donations yet.
-                    </TableCell>
-                  </TableRow>
-                )}
+          {/* Cards */}
+          {latest?.map((d) => (
+            <div
+              key={d._id}
+              className="bg-white border-2 border-[#008751] p-4 flex flex-col gap-3"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <span className="font-bold text-[#1c1b1b] text-base">
+                  {d.donor?.name ?? "Unknown"}
+                </span>
+                <span className="font-[family-name:var(--font-anton)] text-[#006b3f] text-[20px] leading-[24px]">
+                  {formatEur(d.amount)}
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <span className="text-sm text-[#3e4a41]">
+                  {formatDate(d.createdAt)}
+                </span>
+                <ManageDonationDialog donation={d} />
+              </div>
+            </div>
+          ))}
+        </div>
 
-                {/* Rows */}
-                {latest?.map((d, i) => (
-                  <TableRow
-                    key={d._id}
-                    className={`hover:bg-[#f0eded] ${
-                      i % 2 === 1 ? "bg-[#f6f3f2]" : ""
-                    }`}
-                  >
-                    <TableCell className="p-4 font-bold">
-                      {d.donor?.name ?? "Unknown"}
+        {/* Desktop table */}
+        <div className="hidden md:block bg-white border-2 border-[#008751] overflow-x-auto">
+          <Table className="w-full text-left border-collapse">
+            <TableHeader>
+              <TableRow className="bg-[#eae7e7] border-b-2 border-[#008751] hover:bg-[#eae7e7]">
+                <TableHead className="p-4 text-sm font-bold uppercase tracking-[0.05em] text-[#1c1b1b]">
+                  Donor Name
+                </TableHead>
+                <TableHead className="p-4 text-sm font-bold uppercase tracking-[0.05em] text-[#1c1b1b]">
+                  Amount
+                </TableHead>
+                <TableHead className="p-4 text-sm font-bold uppercase tracking-[0.05em] text-[#1c1b1b]">
+                  Date
+                </TableHead>
+                <TableHead className="p-4 text-sm font-bold uppercase tracking-[0.05em] text-[#1c1b1b] text-right">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className="text-base divide-y divide-[#e5e2e1]">
+              {/* Loading */}
+              {latest === undefined &&
+                Array.from({ length: 4 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="p-4">
+                      <Skeleton className="h-5 w-32" />
                     </TableCell>
-                    <TableCell className="p-4 text-[#006b3f] font-bold">
-                      {formatEur(d.amount)}
+                    <TableCell className="p-4">
+                      <Skeleton className="h-5 w-16" />
                     </TableCell>
-                    <TableCell className="p-4 text-[#3e4a41]">
-                      {formatDate(d.createdAt)}
+                    <TableCell className="p-4">
+                      <Skeleton className="h-5 w-24" />
                     </TableCell>
                     <TableCell className="p-4 text-right">
-                      <ManageDonationDialog donation={d} />
+                      <Skeleton className="h-8 w-20 ml-auto" />
                     </TableCell>
                   </TableRow>
                 ))}
-              </TableBody>
-            </Table>
-          </div>
-        </section>
 
-        <Toaster />
-      </main>
+              {/* Empty */}
+              {latest !== undefined && latest.length === 0 && (
+                <TableRow>
+                  <TableCell
+                    colSpan={4}
+                    className="p-8 text-center text-[#3e4a41]"
+                  >
+                    No donations yet.
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {/* Rows */}
+              {latest?.map((d, i) => (
+                <TableRow
+                  key={d._id}
+                  className={`hover:bg-[#f0eded] ${
+                    i % 2 === 1 ? "bg-[#f6f3f2]" : ""
+                  }`}
+                >
+                  <TableCell className="p-4 font-bold">
+                    {d.donor?.name ?? "Unknown"}
+                  </TableCell>
+                  <TableCell className="p-4 text-[#006b3f] font-bold">
+                    {formatEur(d.amount)}
+                  </TableCell>
+                  <TableCell className="p-4 text-[#3e4a41]">
+                    {formatDate(d.createdAt)}
+                  </TableCell>
+                  <TableCell className="p-4 text-right">
+                    <ManageDonationDialog donation={d} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </section>
+
+      <Toaster />
+    </main>
   );
 }
