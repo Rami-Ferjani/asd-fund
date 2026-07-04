@@ -114,7 +114,7 @@ function AddDonorDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="bg-[#7a590c] text-[#fdfff9] hover:bg-[#78580b] border-2 border-transparent shadow-[4px_4px_0px_#006b3f] flex items-center gap-2 uppercase font-bold tracking-[0.05em] text-sm px-6 py-2 rounded-none">
+        <Button className="bg-[#7a590c] text-[#fdfff9] hover:bg-[#78580b] border-2 border-transparent shadow-[4px_4px_0px_#006b3f] flex items-center gap-2 uppercase font-bold tracking-[0.05em] text-sm px-6 py-2 rounded-none w-full sm:w-auto justify-center">
           <UserPlus className="size-4" />
           Add New Donor
         </Button>
@@ -220,7 +220,7 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
       <DialogTrigger asChild>
         <Button
           size="icon"
-          className="p-2 bg-white border border-[#008751] text-[#006b3f] hover:bg-[#008751] hover:text-[#fdfff9] rounded-none"
+          className="p-2 size-9 sm:size-auto bg-white border border-[#008751] text-[#006b3f] hover:bg-[#008751] hover:text-[#fdfff9] rounded-none"
         >
           <Pencil className="size-4" />
         </Button>
@@ -299,7 +299,7 @@ function DeleteDonorDialog({ donor }: { donor: DonorWithTotal }) {
       <AlertDialogTrigger asChild>
         <Button
           size="icon"
-          className="p-2 bg-white border border-[#ba1a1a] text-[#ba1a1a] hover:bg-[#ba1a1a] hover:text-white rounded-none"
+          className="p-2 size-9 sm:size-auto bg-white border border-[#ba1a1a] text-[#ba1a1a] hover:bg-[#ba1a1a] hover:text-white rounded-none"
         >
           <Trash2 className="size-4" />
         </Button>
@@ -395,32 +395,94 @@ export default function DonorsPage() {
   }
 
   return (
-    <main className="flex-1 w-full max-w-[1200px] mx-auto px-8 py-12 flex flex-col gap-6">
+    <main className="flex-1 w-full max-w-[1200px] mx-auto px-4 py-8 sm:px-6 sm:py-10 md:px-8 md:py-12 flex flex-col gap-4 sm:gap-6">
       {/* Header row */}
-      <div className="flex items-center justify-between">
-        <h1 className="font-[family-name:var(--font-anton)] text-[32px] leading-[40px] text-[#006b3f] uppercase tracking-wide">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="font-[family-name:var(--font-anton)] text-[24px] leading-[32px] sm:text-[28px] sm:leading-[34px] md:text-[32px] md:leading-[40px] text-[#006b3f] uppercase tracking-wide">
           Donor Management
         </h1>
         <AddDonorDialog />
       </div>
 
       {/* Card container */}
-      <div className="bg-white border-2 border-[#e5e2e1] p-6 shadow-[8px_8px_0px_#f0eded]">
+      <div className="bg-white border-2 border-[#e5e2e1] p-4 sm:p-6 shadow-[8px_8px_0px_#f0eded]">
         {/* Toolbar */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="relative w-96">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4 sm:mb-6">
+          <div className="relative w-full sm:w-80 md:w-96">
             <Search className="size-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#6e7a70]" />
             <Input
               placeholder="Search donors..."
               value={search}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-10 pr-4 py-2 border-2 border-[#e5e2e1] bg-white text-[#1c1b1b] focus:outline-none focus:border-[#006b3f] w-full rounded-none"
+              className="pl-10 pr-4 py-2.5 sm:py-2 border-2 border-[#e5e2e1] bg-white text-[#1c1b1b] focus:outline-none focus:border-[#006b3f] w-full rounded-none"
             />
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
+        {/* Mobile donor card list */}
+        <div className="md:hidden flex flex-col gap-3">
+          {/* Loading */}
+          {donors === undefined &&
+            Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="border-2 border-[#e5e2e1] p-4">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="size-10 rounded-full" />
+                  <Skeleton className="h-5 w-32" />
+                </div>
+                <Skeleton className="h-4 w-24 mt-3" />
+              </div>
+            ))}
+
+          {/* Empty */}
+          {donors !== undefined && donors.length === 0 && (
+            <div className="border-2 border-[#e5e2e1] p-6 text-center text-[#3e4a41]">
+              No donors yet.
+            </div>
+          )}
+
+          {/* No search matches */}
+          {filtered !== undefined &&
+            filtered.length === 0 &&
+            donors !== undefined &&
+            donors.length > 0 && (
+              <div className="border-2 border-[#e5e2e1] p-6 text-center text-[#3e4a41]">
+                No donors match &ldquo;{search}&rdquo;.
+              </div>
+            )}
+
+          {/* Cards */}
+          {paged?.map((donor) => (
+            <div
+              key={donor._id}
+              className="border-2 border-[#e5e2e1] p-4 flex flex-col gap-3"
+            >
+              <div className="flex items-center gap-3">
+                <Avatar className="size-10 rounded-full">
+                  <AvatarImage src={donor.imageUrl} alt={donor.name} />
+                  <AvatarFallback className="bg-[#eae7e7] text-[#006b3f] font-bold">
+                    {initials(donor.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-bold text-[#1c1b1b] truncate">{donor.name}</span>
+                  <span className="text-sm text-[#3e4a41] truncate">
+                    {donor.phone ?? "—"}
+                  </span>
+                </div>
+                <span className="ml-auto font-[family-name:var(--font-anton)] text-[#006b3f] text-[20px] leading-[24px]">
+                  {formatEur(donor.totalDonated)}
+                </span>
+              </div>
+              <div className="flex items-center justify-end gap-2">
+                <EditDonorDialog donor={donor} />
+                <DeleteDonorDialog donor={donor} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <div className="hidden md:block overflow-x-auto">
           <Table className="w-full text-left border-collapse">
             <TableHeader>
               <TableRow className="bg-[#eae7e7] border-b-2 border-[#008751] hover:bg-[#eae7e7]">
@@ -494,15 +556,15 @@ export default function DonorsPage() {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between mt-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mt-4 sm:mt-6">
           <p className="text-sm text-[#3e4a41]">
             Showing {showingFrom}&ndash;{showingTo} of {total} donors
           </p>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-wrap">
             <button
               disabled={page === 0}
               onClick={() => setPage((p) => p - 1)}
-              className="px-3 py-1 border border-[#e5e2e1] hover:bg-[#f0eded] disabled:opacity-50 text-sm text-[#1c1b1b]"
+              className="px-3 py-2 min-h-[40px] border border-[#e5e2e1] hover:bg-[#f0eded] disabled:opacity-50 text-sm text-[#1c1b1b]"
             >
               Prev
             </button>
@@ -510,7 +572,7 @@ export default function DonorsPage() {
               <button
                 key={i}
                 onClick={() => setPage(i)}
-                className={`px-3 py-1 border text-sm ${
+                className={`px-3 py-2 min-h-[40px] min-w-[40px] border text-sm ${
                   i === page
                     ? "border-[#008751] bg-[#008751] text-[#fdfff9]"
                     : "border-[#e5e2e1] hover:bg-[#f0eded] text-[#1c1b1b]"
@@ -522,7 +584,7 @@ export default function DonorsPage() {
             <button
               disabled={page === pageCount - 1}
               onClick={() => setPage((p) => p + 1)}
-              className="px-3 py-1 border border-[#e5e2e1] hover:bg-[#f0eded] disabled:opacity-50 text-sm text-[#1c1b1b]"
+              className="px-3 py-2 min-h-[40px] border border-[#e5e2e1] hover:bg-[#f0eded] disabled:opacity-50 text-sm text-[#1c1b1b]"
             >
               Next
             </button>

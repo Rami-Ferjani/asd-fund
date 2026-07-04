@@ -78,15 +78,15 @@ function StatCard({
   loading: boolean;
 }) {
   return (
-    <div className="bg-white p-8 border-2 border-[#008751] transition-[border-width] hover:border-[3px]">
+    <div className="bg-white p-5 sm:p-6 md:p-8 border-2 border-[#008751] transition-[border-width] hover:border-[3px]">
       <div className="text-[#3e4a41] text-sm font-bold uppercase tracking-[0.05em] mb-2">
         {label}
       </div>
       {loading ? (
-        <Skeleton className="h-[80px] w-full" />
+        <Skeleton className="h-[44px] sm:h-[64px] md:h-[80px] w-full" />
       ) : (
         <div
-          className={`font-[family-name:var(--font-anton)] text-[72px] leading-[80px] ${valueClass}`}
+          className={`font-[family-name:var(--font-anton)] text-[40px] leading-[44px] sm:text-[56px] sm:leading-[64px] md:text-[72px] md:leading-[80px] ${valueClass}`}
         >
           {value}
         </div>
@@ -241,21 +241,21 @@ export default function AdminInfoPage() {
   const donorsCount = donors?.length ?? 0;
 
   return (
-    <main className="flex-1 max-w-7xl mx-auto px-8 py-20 w-full">
+    <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-20">
         {/* Header */}
-        <header className="mb-20 flex justify-between items-end">
+        <header className="mb-10 sm:mb-16 md:mb-20 flex flex-col gap-2">
           <div>
-            <h2 className="font-[family-name:var(--font-anton)] text-[48px] leading-[56px] text-[#006b3f] uppercase">
+            <h2 className="font-[family-name:var(--font-anton)] text-[28px] leading-[34px] sm:text-[36px] sm:leading-[40px] md:text-[48px] md:leading-[56px] text-[#006b3f] uppercase">
               Fund Overview
             </h2>
-            <p className="text-[18px] leading-[28px] text-[#3e4a41] mt-2 font-[family-name:var(--font-be-vietnam)]">
+            <p className="text-[16px] leading-[24px] sm:text-[18px] sm:leading-[28px] text-[#3e4a41] mt-2 font-[family-name:var(--font-be-vietnam)]">
               Manage donations for the new club bus.
             </p>
           </div>
         </header>
 
         {/* Stats */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-10 sm:mb-16 md:mb-20">
           <StatCard
             label="Total Donations"
             value={formatEur(total ?? 0)}
@@ -278,11 +278,52 @@ export default function AdminInfoPage() {
 
         {/* Recent Activity */}
         <section>
-          <h3 className="font-[family-name:var(--font-anton)] text-[32px] leading-[40px] text-[#1c1b1b] mb-6 uppercase">
+          <h3 className="font-[family-name:var(--font-anton)] text-[24px] leading-[32px] sm:text-[28px] sm:leading-[34px] md:text-[32px] md:leading-[40px] text-[#1c1b1b] mb-4 sm:mb-6 uppercase">
             Recent Activity
           </h3>
 
-          <div className="bg-white border-2 border-[#008751] overflow-x-auto">
+          {/* Mobile card list */}
+          <div className="md:hidden flex flex-col gap-3">
+            {/* Loading */}
+            {latest === undefined &&
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-white border-2 border-[#008751] p-4">
+                  <Skeleton className="h-5 w-32 mb-3" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              ))}
+
+            {/* Empty */}
+            {latest !== undefined && latest.length === 0 && (
+              <div className="bg-white border-2 border-[#008751] p-6 text-center text-[#3e4a41]">
+                No donations yet.
+              </div>
+            )}
+
+            {/* Cards */}
+            {latest?.map((d) => (
+              <div
+                key={d._id}
+                className="bg-white border-2 border-[#008751] p-4 flex flex-col gap-3"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <span className="font-bold text-[#1c1b1b] text-base">
+                    {d.donor?.name ?? "Unknown"}
+                  </span>
+                  <span className="font-[family-name:var(--font-anton)] text-[#006b3f] text-[20px] leading-[24px]">
+                    {formatEur(d.amount)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-sm text-[#3e4a41]">{formatDate(d.createdAt)}</span>
+                  <ManageDonationDialog donation={d} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <div className="hidden md:block bg-white border-2 border-[#008751] overflow-x-auto">
             <Table className="w-full text-left border-collapse">
               <TableHeader>
                 <TableRow className="bg-[#eae7e7] border-b-2 border-[#008751] hover:bg-[#eae7e7]">
