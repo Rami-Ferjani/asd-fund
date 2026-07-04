@@ -35,7 +35,7 @@ export function DeleteDonationDialog({
     } catch {
       toast.error("Failed to delete donation");
     } finally {
-      setIsDeleting(true);
+      setIsDeleting(false);
     }
   }
 
