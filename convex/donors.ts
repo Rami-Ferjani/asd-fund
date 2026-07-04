@@ -78,3 +78,27 @@ export const deleteDonor = mutation({
     await ctx.db.delete(donorId);
   },
 });
+
+// Returns every donor annotated with their total donated amount.
+// Donations are summed server-side so the frontend never recomputes totals.
+export const getDonorsWithTotals = query({
+  args: {},
+  handler: async (ctx) => {
+    const donors = await ctx.db.query("donors").collect();
+
+    const donorsWithTotals = await Promise.all(
+      donors.map(async (donor) => {
+        const donations = await ctx.db
+          .query("donations")
+          .withIndex("by_donor", (q) => q.eq("donorId", donor._id))
+          .collect();
+
+        const totalDonated = donations.reduce((sum, d) => sum + d.amount, 0);
+
+        return { ...donor, totalDonated };
+      }),
+    );
+
+    return donorsWithTotals;
+  },
+});

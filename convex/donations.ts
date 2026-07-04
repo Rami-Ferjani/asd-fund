@@ -104,6 +104,29 @@ export const getTotalRaised = query({
   },
 });
 
+// Returns every donation with its donor attached, newest first.
+// Mirrors getLatestDonations but without the take(10) cap so the admin
+// donations table can paginate client-side over the full history.
+export const getDonationsWithDonors = query({
+  args: {},
+  handler: async (ctx) => {
+    const donations = await ctx.db
+      .query("donations")
+      .withIndex("by_createdAt")
+      .order("desc")
+      .collect();
+
+    const withDonors = await Promise.all(
+      donations.map(async (donation) => {
+        const donor = await ctx.db.get(donation.donorId);
+        return { ...donation, donor };
+      }),
+    );
+
+    return withDonors;
+  },
+});
+
 export const getLatestDonations = query({
   handler: async (ctx) => {
     // Get latest donations first
@@ -128,3 +151,4 @@ export const getLatestDonations = query({
     return latestDonations;
   },
 });
+
