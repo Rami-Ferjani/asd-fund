@@ -128,3 +128,23 @@
     @apply font-sans;
   }
 }
+
+/* ── 200 Challenge slot grid ── */
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+  gap: 4px;
+}
+@media (min-width: 768px) {
+  .slot-grid {
+    grid-template-columns: repeat(20, 1fr);
+  }
+}
+
+/* ── RTL Material Symbols flip ── */
+[dir="rtl"] .material-symbols-outlined {
+  transform: scaleX(-1);
+}
+[dir="rtl"] .material-symbols-outlined.no-rtl {
+  transform: scaleX(1);
+}
