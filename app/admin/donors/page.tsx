@@ -5,6 +5,7 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { UserPlus, Search, Pencil, Trash2 } from "lucide-react";
+import { ImageUpload } from "@/components/image-upload";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,6 +83,7 @@ function AddDonorDialog() {
   const [phone, setPhone] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const createDonor = useMutation(api.donors.createDonor);
 
   function handleOpenChange(nextOpen: boolean) {
@@ -152,19 +154,7 @@ function AddDonorDialog() {
             />
           </div>
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="add-image">Profile Picture URL</Label>
-            <Input
-              id="add-image"
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://example.com/photo.jpg"
-            />
-            <p className="text-xs text-[#3e4a41]">
-              Paste an image URL. File upload is coming soon.
-            </p>
-          </div>
+          <ImageUpload value={imageUrl} onChange={setImageUrl} onUploadingChange={setIsUploading} />
         </div>
 
         <DialogFooter>
@@ -173,7 +163,7 @@ function AddDonorDialog() {
               Cancel
             </Button>
           </DialogClose>
-          <Button size="sm" onClick={handleSubmit}>
+          <Button size="sm" onClick={handleSubmit} disabled={isUploading}>
             Save
           </Button>
         </DialogFooter>
@@ -188,6 +178,7 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
   const [phone, setPhone] = useState(donor.phone ?? "");
   const [imageUrl, setImageUrl] = useState(donor.imageUrl);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const updateDonor = useMutation(api.donors.updateDonor);
 
@@ -259,16 +250,7 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="edit-image">Profile Picture URL</Label>
-            <Input
-              id="edit-image"
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-            />
-            <p className="text-xs text-[#3e4a41]">
-              Paste an image URL. File upload is coming soon.
-            </p>
+            <ImageUpload value={imageUrl} onChange={setImageUrl} onUploadingChange={setIsUploading} />
           </div>
         </div>
 
@@ -278,7 +260,7 @@ function EditDonorDialog({ donor }: { donor: DonorWithTotal }) {
               Cancel
             </Button>
           </DialogClose>
-          <Button size="sm" onClick={handleSave} disabled={isSaving}>
+          <Button size="sm" onClick={handleSave} disabled={isSaving || isUploading}>
             Save
           </Button>
         </DialogFooter>
