@@ -5,6 +5,7 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { toast } from "sonner";
 import { UserPlus } from "lucide-react";
+import { ImageUpload } from "@/components/image-upload";
 import { Id } from "@/convex/_generated/dataModel";
 
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,7 @@ export function AddDonorDialog({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const createDonor = useMutation(api.donors.createDonor);
 
@@ -91,18 +93,14 @@ export function AddDonorDialog({
             <Label htmlFor="add-phone">Phone Number</Label>
             <Input id="add-phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+353 87 123 4567" />
           </div>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="add-image">Profile Picture URL</Label>
-            <Input id="add-image" type="url" value={imageUrl} onChange={(e) => setImageUrl(e.target.value)} placeholder="https://example.com/photo.jpg" />
-            <p className="text-xs text-[#3e4a41]">Paste an image URL. File upload is coming soon.</p>
-          </div>
+          <ImageUpload value={imageUrl} onChange={setImageUrl} onUploadingChange={setIsUploading} />
         </div>
 
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="ghost" size="sm">Cancel</Button>
           </DialogClose>
-          <Button size="sm" onClick={handleSubmit}>Save</Button>
+          <Button size="sm" onClick={handleSubmit} disabled={isUploading}>Save</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
