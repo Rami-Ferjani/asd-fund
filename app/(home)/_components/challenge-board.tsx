@@ -36,7 +36,10 @@ export function ChallengeBoard() {
   // ── Skeleton ──
   if (!data) {
     return (
-      <section id="challenge" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-20">
+      <section
+        id="challenge"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-20"
+      >
         <div className="text-center mb-6">
           <Skeleton className="h-[40px] w-[300px] mx-auto mb-4" />
           <Skeleton className="h-[28px] w-[500px] mx-auto" />
@@ -50,7 +53,10 @@ export function ChallengeBoard() {
 
   return (
     <>
-      <section id="challenge" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-20">
+      <section
+        id="challenge"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-20"
+      >
         {/* Title */}
         <div className="text-center mb-6">
           <h2 className="font-[family-name:var(--font-anton)] uppercase text-[28px] leading-[34px] sm:text-[32px] sm:leading-[40px] text-[#006b3f] mb-4">

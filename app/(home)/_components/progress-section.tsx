@@ -44,7 +44,7 @@ export function ProgressSection() {
                 {formatEur(totalRaised)}
               </span>{" "}
               <span className="text-[18px] leading-[28px] text-[#3e4a41]">
-                تجمعوا من هدف {FUNDRAISING_GOAL_EUR.toLocaleString("ar-EG")}{" "}
+                تجمعوا من هدف {FUNDRAISING_GOAL_EUR.toLocaleString("en-IE")}{" "}
                 يورو
               </span>
             </div>
