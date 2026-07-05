@@ -82,3 +82,29 @@ Do NOT propose or implement changes to:
 - Application functionality
 
 Base every recommendation on the existing implementation. Do not invent components, features, or functionality that are not already present in the project. The goal is to improve responsiveness while preserving all existing behavior.
+
+
+
+Read the following project context documents before doing anything:
+
+- @context/project-overview.md
+- @context/architecture-context.md
+- @context/DESIGN.md
+
+Your task is to create a detailed implementation plan for implementing the image upload functionality using vercel blob
+Inspect the following files 
+@app/admin/donors/page.tsx
+@app/admin/donations/page.tsx
+currently when we add a donor or modify. we put the url of his picture manully in a text field .your job is to make the plan to make so that the admin sees a "upload image" button  and when he presses it it opens his device storage to choose a photo.after that the photo gets sent to vercel blob and when the url is returned , the corresponding create donor  mutation runs and in the database the profil pic gets saved
+the convex mutation gets run only after it receives  the vercel blob url
+modify both files @app/admin/donors/page.tsx and @app/admin/donations/page.tsx so that they both offer image upload when adding for modifying
+do not touch convex backend
+you may add a new route for the upload in next js
+Do not add authentication
+
+if you need a shdcn compoenet or a library for the upload feature in next js . you may download it after you ask me
+⚠️ IMPORTANT
+
+This task is ONLY to create an implementation plan.
+
+Do NOT modify any source code.
