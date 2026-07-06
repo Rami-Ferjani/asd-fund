@@ -34,7 +34,7 @@ export function ContributionSection() {
               المسؤول عن البترعات
             </h3>
             <p className="text-[16px] leading-[24px] text-[#3e4a41]">
-             Samir Chergui
+              Samir Chergui
             </p>
           </div>
 
