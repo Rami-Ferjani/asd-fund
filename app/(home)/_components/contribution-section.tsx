@@ -31,7 +31,7 @@ export function ContributionSection() {
               person
             </span>
             <h3 className="font-bold text-[20px] leading-[28px] text-[#1c1b1b]">
-              المسؤول عن البترعات
+              المسؤول عن التبرعات
             </h3>
             <p className="text-[16px] leading-[24px] text-[#3e4a41]">
               Samir Chergui
